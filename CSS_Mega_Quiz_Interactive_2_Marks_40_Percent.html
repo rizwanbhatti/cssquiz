@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Mega Quiz — 50 MCQs</title>
+<style>
+:root{--bg:#f3f6fb;--card:#fff;--ink:#172033;--muted:#687386;--primary:#3157d5;--line:#e4e9f2;--green:#16834b;--red:#c63737}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif;line-height:1.55}
+.wrap{width:min(760px,calc(100% - 28px));margin:34px auto}.brand{font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--primary);text-transform:uppercase}
+h1{font-size:clamp(25px,5vw,34px);line-height:1.2;margin:8px 0}.sub{color:var(--muted);margin:0 0 22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:clamp(20px,4vw,32px);box-shadow:0 10px 30px #23365a0b}
+label{display:block;font-weight:700;margin:16px 0 7px}.field{width:100%;padding:13px 14px;border:1px solid #cfd7e5;border-radius:10px;font-size:16px;outline:none}.field:focus{border-color:var(--primary);box-shadow:0 0 0 3px #3157d51a}
+.btn{border:0;border-radius:10px;background:var(--primary);color:#fff;font-size:16px;font-weight:700;padding:13px 20px;cursor:pointer}.btn:disabled{opacity:.45;cursor:not-allowed}.btn.secondary{background:#e9eefb;color:var(--primary)}.actions{display:flex;justify-content:flex-end;margin-top:24px}
+.note{font-size:13px;color:var(--muted);margin-top:14px}.meta{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:14px;margin-bottom:12px}
+.track{height:8px;background:#e9edf5;border-radius:99px;overflow:hidden;margin-bottom:25px}.bar{height:100%;background:var(--primary);width:0%;transition:width .2s}
+.qtitle{font-size:20px;font-weight:700;margin:0 0 20px}.option{display:flex;align-items:flex-start;gap:12px;padding:14px;border:1px solid var(--line);border-radius:12px;margin:10px 0;cursor:pointer}.option:hover{border-color:#9eafea;background:#f8faff}.option input{margin-top:5px;accent-color:var(--primary);transform:scale(1.15)}.option:has(input:checked){border-color:var(--primary);background:#f2f5ff}
+.result{text-align:center}.score{font-size:58px;font-weight:800;line-height:1.2;margin:12px 0}.pass{color:var(--green)}.fail{color:var(--red)}.result p{color:var(--muted)}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:24px 0}.stat{background:#f6f8fc;border-radius:12px;padding:14px}.stat b{display:block;font-size:23px}.stat span{font-size:12px;color:var(--muted)}
+.review{margin-top:24px;text-align:left}.review h2{font-size:21px}.wrong{border:1px solid #f0d5d5;border-radius:12px;padding:16px;margin:12px 0;background:#fffafa}.wrong h3{font-size:16px;margin:0 0 12px}.ans{margin:7px 0;font-size:14px}.bad{color:var(--red);font-weight:700}.good{color:var(--green);font-weight:700}.explain{background:#f3f6fb;border-radius:8px;padding:10px;margin-top:10px;font-size:14px}
+.hidden{display:none!important}.footer{text-align:center;color:#8a94a6;font-size:12px;margin:18px 0}
+@media(max-width:520px){.wrap{margin:18px auto}.stats{gap:6px}.stat{padding:10px}.stat b{font-size:20px}.qtitle{font-size:18px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">CSS Assessment</div>
+  <h1>CSS Mega Quiz</h1>
+  <p class="sub">50 Multiple Choice Questions · 2 marks each · Total: 100 marks · Passing score: 40% (40/100)</p>
+
+  <section class="card" id="studentScreen">
+    <h2>Student Information</h2>
+    <p class="sub">Quiz start karne se pehle apni information enter karein.</p>
+    <form id="studentForm">
+      <label for="studentName">Student Name *</label>
+      <input class="field" id="studentName" required maxlength="80" placeholder="Enter your full name">
+      <label for="fatherName">Father Name</label>
+      <input class="field" id="fatherName" maxlength="80" placeholder="Enter father name">
+      <label for="batch">Class / Batch *</label>
+      <input class="field" id="batch" required maxlength="60" placeholder="Enter your class or batch">
+      <label for="studentEmail">Email (optional)</label>
+      <input class="field" id="studentEmail" type="email" maxlength="120" placeholder="Enter email address">
+      <div class="note">Har question ka sirf aik answer select karein. Next karne ke baad previous question par wapas nahi ja sakenge.</div>
+      <div class="actions"><button class="btn" type="submit">Start Quiz</button></div>
+    </form>
+  </section>
+
+  <section class="card hidden" id="quizScreen">
+    <div class="meta"><span id="questionCount">Question 1 of 50</span><span id="answeredCount">Answered: 0/50</span></div>
+    <div class="track"><div class="bar" id="progress"></div></div>
+    <div class="qtitle" id="questionText"></div>
+    <div id="options"></div>
+    <div class="actions"><button class="btn" id="nextBtn" disabled>Next Question</button></div>
+    <div class="note">Warning: Next question par jane ke baad back nahi ja sakenge.</div>
+  </section>
+
+  <section class="card hidden" id="resultScreen">
+    <div class="result">
+      <div class="brand">Quiz Completed</div>
+      <h2 id="resultHeading">Your Result</h2>
+      <div class="score" id="scoreText"></div>
+      <div id="statusText"></div>
+      <div class="stats">
+        <div class="stat"><b id="correctCount">0</b><span>Correct</span></div>
+        <div class="stat"><b id="incorrectCount">0</b><span>Incorrect</span></div>
+        <div class="stat"><b id="percentText">0%</b><span>Percentage</span></div>
+      </div>
+      <p id="studentSummary"></p>
+      <button class="btn secondary" id="reviewBtn">See Incorrect Questions</button>
+    </div>
+    <div class="review hidden" id="reviewSection">
+      <h2>Incorrect Answers — Review</h2>
+      <div id="wrongList"></div>
+    </div>
+  </section>
+  <div class="footer">CSS Mega Quiz · 50 MCQs · 100 Marks</div>
+</div>
+
+<script>
+const QUESTIONS = [{"num": 1, "question": "Kaunsa selector sirf even-numbered children ko select karta hai?", "options": [{"label": "li:nth-child(odd)", "correct": false}, {"label": "li:nth-child(even)", "correct": true}, {"label": "li:first-child", "correct": false}, {"label": "li:nth-of-type(1)", "correct": false}], "explanation": ":nth-child(even) positions 2, 4, 6... ko select karta hai."}, {"num": 2, "question": "margin: 10px 20px 30px 40px; mein values ka order kya hai?", "options": [{"label": "left, top, right, bottom", "correct": false}, {"label": "top, right, bottom, left", "correct": true}, {"label": "top, bottom, left, right", "correct": false}, {"label": "bottom, left, top, right", "correct": false}], "explanation": "Clockwise order hota hai: top, right, bottom, left."}, {"num": 3, "question": "h1 + p kya select karta hai?", "options": [{"label": "h1 ke andar ke saare p", "correct": false}, {"label": "h1 ke baad ke saare sibling p", "correct": false}, {"label": "Wo p jo h1 ke turant baad aata hai (adjacent sibling)", "correct": true}, {"label": "h1 ka direct child p", "correct": false}], "explanation": "+ adjacent sibling combinator hai, sirf immediately next sibling match hota hai. Saare baad ke siblings ke liye ~ use hota hai."}, {"num": 4, "question": "rem unit kis ke relative hoti hai?", "options": [{"label": "Parent ke font-size ke", "correct": false}, {"label": "Root (<html>) ke font-size ke", "correct": true}, {"label": "Viewport width ke", "correct": false}, {"label": "Element ki apni width ke", "correct": false}], "explanation": "rem = root em. Ye html element ke font-size par based hoti hai, jabki em parent/current element par depend karti hai."}, {"num": 5, "question": "display: none aur visibility: hidden mein kya farq hai?", "options": [{"label": "Dono layout mein space rakhte hain", "correct": false}, {"label": "display:none space hata deta hai, visibility:hidden space bacha kar rakhta hai", "correct": true}, {"label": "Dono space hata dete hain", "correct": false}, {"label": "visibility:hidden element ko DOM se nikal deta hai", "correct": false}], "explanation": "display:none element ko layout se poori tarah nikal deta hai. visibility:hidden mein element dikhta nahi lekin uski jagah bani rehti hai."}, {"num": 6, "question": "Parent ke andar sab children float hain aur parent ki height collapse ho gayi. Kaunsa fix kaam karega?", "options": [{"label": "position: static", "correct": false}, {"label": "overflow: hidden (ya clearfix)", "correct": true}, {"label": "z-index: 1", "correct": false}, {"label": "opacity: 1", "correct": false}], "explanation": "overflow: hidden parent mein naya block formatting context banata hai, jis se floats contain ho jate hain. Modern way display: flow-root hai."}, {"num": 7, "question": "Traditionally transition ke saath kaunsi change smoothly animate nahi hoti?", "options": [{"label": "opacity: 0 se 1", "correct": false}, {"label": "width: 100px se 200px", "correct": false}, {"label": "display: none se block", "correct": true}, {"label": "background-color change", "correct": false}], "explanation": "display discrete property hai, interpolate nahi hoti. Naye browsers mein transition-behavior: allow-discrete se ye possible hai."}, {"num": 8, "question": "object-fit: cover ka kya kaam hai?", "options": [{"label": "Image ko stretch karke box bhar deta hai", "correct": false}, {"label": "Aspect ratio rakhte hue box ko fill karta hai aur extra hissa crop kar deta hai", "correct": true}, {"label": "Poori image box mein fit karta hai (letterbox)", "correct": false}, {"label": "Image ko repeat karta hai", "correct": false}], "explanation": "cover box ko poora bharta hai bina distortion ke, isliye overflow wala hissa crop hota hai. contain mein poori image dikhti hai."}, {"num": 9, "question": "position: sticky ko kaam karne ke liye kya zaroori hai?", "options": [{"label": "top/bottom/left/right mein se koi threshold value", "correct": true}, {"label": "z-index", "correct": false}, {"label": "Parent par overflow: hidden", "correct": false}, {"label": "display: flex", "correct": false}], "explanation": "Sticky ko batana padta hai ki kahan stick kare, jaise top: 0. Threshold ke bina ye relative jaisa behave karta hai."}, {"num": 10, "question": "::before ya ::after render hone ke liye kaunsi property zaroori hai?", "options": [{"label": "display: block", "correct": false}, {"label": "content", "correct": true}, {"label": "position: absolute", "correct": false}, {"label": "height", "correct": false}], "explanation": "content ke bina pseudo-element generate hi nahi hota. Khali ho to content: \"\" dena padta hai."}, {"num": 11, "question": "flex: 1 shorthand kis ke barabar hai?", "options": [{"label": "flex: 0 0 auto", "correct": false}, {"label": "flex: 1 1 0%", "correct": true}, {"label": "flex: 0 1 auto", "correct": false}, {"label": "flex: 1 0 auto", "correct": false}], "explanation": "flex: 1 = flex-grow 1, flex-shrink 1, flex-basis 0%. Is se items available space barabar baant lete hain."}, {"num": 12, "question": "gap property kahan kaam karti hai?", "options": [{"label": "Sirf grid mein", "correct": false}, {"label": "Sirf flexbox mein", "correct": false}, {"label": "Flexbox, grid aur multi-column, teeno mein", "correct": true}, {"label": "Sirf inline elements mein", "correct": false}], "explanation": "Modern browsers mein gap flex, grid aur multi-column layouts mein items ke beech ki spacing deta hai."}, {"num": 13, "question": "font-size: 1.5em ka matlab kya hai?", "options": [{"label": "Root font-size ka 1.5 guna", "correct": false}, {"label": "Parent ke font-size ka 1.5 guna", "correct": true}, {"label": "Viewport ka 1.5%", "correct": false}, {"label": "Element ki width ka 1.5 guna", "correct": false}], "explanation": "font-size property mein em parent ke computed font-size ke relative hoti hai. Nested elements mein ye compound ho jati hai."}, {"num": 14, "question": "Do rules ki specificity barabar hai aur !important nahi hai. Kaun jeetega?", "options": [{"label": "Pehle likha hua rule", "correct": false}, {"label": "Baad mein likha hua rule (source order)", "correct": true}, {"label": "Alphabetical order wala", "correct": false}, {"label": "Browser random choose karta hai", "correct": false}], "explanation": "Specificity barabar ho to cascade mein last declared rule jeet-ta hai."}, {"num": 15, "question": "Grid mein 1fr ka matlab kya hai?", "options": [{"label": "1 pixel", "correct": false}, {"label": "Available free space ka ek fraction (share)", "correct": true}, {"label": "Viewport ka 1%", "correct": false}, {"label": "1 font-size", "correct": false}], "explanation": "fr unit bacha hua free space tracks mein ratio ke hisaab se baant deta hai. 1fr 2fr ka matlab 1:2 ratio."}, {"num": 16, "question": "font-size: clamp(1rem, 2vw, 2rem); ka behavior kya hai?", "options": [{"label": "Hamesha 2vw rehta hai", "correct": false}, {"label": "Value 1rem se kam aur 2rem se zyada nahi hoti, beech mein 2vw follow karti hai", "correct": true}, {"label": "Teeno values ka average leta hai", "correct": false}, {"label": "Invalid syntax hai", "correct": false}], "explanation": "clamp(min, preferred, max) fluid typography ke liye best hai: value min aur max ke beech clamp hoti hai."}, {"num": 17, "question": "Mobile-first approach mein aam taur par kaunsi media query use hoti hai?", "options": [{"label": "@media (max-width: ...)", "correct": false}, {"label": "@media (min-width: ...)", "correct": true}, {"label": "@media print", "correct": false}, {"label": "@media (orientation: portrait) only", "correct": false}], "explanation": "Base styles mobile ke liye hote hain aur min-width queries bade screens par styles add karti hain."}, {"num": 18, "question": "Inme se kaunsa calc() valid hai?", "options": [{"label": "calc(100% -20px)", "correct": false}, {"label": "calc(100%-20px)", "correct": false}, {"label": "calc(100% - 20px)", "correct": true}, {"label": "calc(100% - 20)", "correct": false}], "explanation": "calc() mein + aur - ke dono taraf space zaroori hai, aur dono operands ki units compatible honi chahiye."}, {"num": 19, "question": "a[href^=\"https\"] kya select karta hai?", "options": [{"label": "Jin links ke href mein kahin bhi https ho", "correct": false}, {"label": "Jin links ka href https se shuru ho", "correct": true}, {"label": "Jin links ka href https par khatam ho", "correct": false}, {"label": "Jin ka href exactly https ho", "correct": false}], "explanation": "^= starts-with, $= ends-with, *= contains aur = exact match hai."}, {"num": 20, "question": "text-overflow: ellipsis kaam karne ke liye aur kya chahiye?", "options": [{"label": "overflow: hidden aur white-space: nowrap", "correct": true}, {"label": "display: flex", "correct": false}, {"label": "position: relative", "correct": false}, {"label": "word-break: break-all", "correct": false}], "explanation": "Text ek line mein rahe (nowrap) aur overflow clip ho (hidden), tabhi ... dikhta hai."}, {"num": 21, "question": "1vh kis ke barabar hota hai?", "options": [{"label": "1 pixel", "correct": false}, {"label": "Viewport height ka 1%", "correct": true}, {"label": "Parent height ka 1%", "correct": false}, {"label": "Font height ka 1%", "correct": false}], "explanation": "vh viewport height ka 1% hai, vw viewport width ka 1%."}, {"num": 22, "question": "Do vertical siblings: pehle ka margin-bottom 30px aur dusre ka margin-top 20px. Beech ka gap kitna hoga?", "options": [{"label": "50px", "correct": false}, {"label": "30px", "correct": true}, {"label": "20px", "correct": false}, {"label": "10px", "correct": false}], "explanation": "Vertical margin collapsing mein bada margin jeet-ta hai, add nahi hote."}, {"num": 23, "question": "Kisi property par inherit keyword ka kya kaam hai?", "options": [{"label": "Default value set karta hai", "correct": false}, {"label": "Parent ki computed value le leta hai", "correct": true}, {"label": "Property ko hata deta hai", "correct": false}, {"label": "Browser ki default stylesheet wapas laata hai", "correct": false}], "explanation": "inherit parent ki value force karta hai, un properties par bhi jo default mein inherit nahi hoti (jaise border)."}, {"num": 24, "question": "align-self ka kya kaam hai?", "options": [{"label": "Poore container ko align karta hai", "correct": false}, {"label": "Ek single flex/grid item ke liye align-items ko override karta hai", "correct": true}, {"label": "Main axis par spacing deta hai", "correct": false}, {"label": "Wrapped lines ko align karta hai", "correct": false}], "explanation": "align-items container par lagta hai, align-self individual item par."}, {"num": 25, "question": "p:nth-of-type(2) kya select karta hai?", "options": [{"label": "Parent ka second child, agar wo p ho", "correct": false}, {"label": "Apne siblings mein dusra p element", "correct": true}, {"label": "Page ke sirf 2 paragraphs", "correct": false}, {"label": "Aakhri p", "correct": false}], "explanation": "nth-of-type sirf same tag ke siblings count karta hai, jabki nth-child har type ke children gino karta hai."}, {"num": 26, "question": "@layer a, b; declare kiya hai. Normal (non-important) rules mein conflict ho to kaun jeetega?", "options": [{"label": "Pehli layer (a)", "correct": false}, {"label": "Baad ki layer (b), specificity chahe kuch bhi ho", "correct": true}, {"label": "Jis ki specificity zyada ho", "correct": false}, {"label": "Unlayered styles hamesha haar-te hain", "correct": false}], "explanation": "Layers ka order specificity se pehle check hota hai: baad mein declare hui layer jeet-ti hai. Unlayered normal styles sab layers par bhari hote hain."}, {"num": 27, "question": ".card:has(img) kya karta hai?", "options": [{"label": "Us .card ko select karta hai jis ke andar img ho", "correct": true}, {"label": "Us img ko select karta hai jis ke andar .card ho", "correct": false}, {"label": ".card ke sibling img ko select karta hai", "correct": false}, {"label": "Invalid selector hai", "correct": false}], "explanation": ":has() relational pseudo-class hai, jis se parent ko uske children ki condition par style kar sakte hain."}, {"num": 28, "question": "aspect-ratio: 16 / 9 ka kya kaam hai?", "options": [{"label": "Element ki width aur height ka ratio 16:9 maintain karta hai", "correct": true}, {"label": "Sirf images par kaam karta hai", "correct": false}, {"label": "Font ki ratio set karta hai", "correct": false}, {"label": "Screen ka ratio change karta hai", "correct": false}], "explanation": "Ek dimension di ho to doosri automatically calculate ho jati hai. Ye kisi bhi box par kaam karta hai, padding-hack ki zaroorat nahi."}, {"num": 29, "question": "dvh unit ki khaas baat kya hai?", "options": [{"label": "Ye vh jaisi hi fixed hoti hai", "correct": false}, {"label": "Dynamic viewport height: mobile browser toolbars dikhne/chupne ke saath badalti hai", "correct": true}, {"label": "Device pixel height hai", "correct": false}, {"label": "Document ki poori height hai", "correct": false}], "explanation": "100vh mobile par address bar ki wajah se cut ho sakta tha. dvh (aur svh/lvh) is problem ko solve karte hain."}, {"num": 30, "question": "@property rule ka fayda kya hai?", "options": [{"label": "Nayi HTML property banata hai", "correct": false}, {"label": "Custom property ko type (syntax), inherits aur initial-value ke saath register karta hai, jis se wo animate ho sakti hai", "correct": true}, {"label": "Media query ka alternative hai", "correct": false}, {"label": "Fonts load karta hai", "correct": false}], "explanation": "Registered custom properties typed hoti hain, isliye gradient angle ya color jaisi variables ko smoothly transition kar sakte hain."}, {"num": 31, "question": "grid-template-columns: subgrid; kya karta hai?", "options": [{"label": "Nested grid parent grid ke tracks use karta hai", "correct": true}, {"label": "Grid ko hide kar deta hai", "correct": false}, {"label": "Grid ko chhota kar deta hai", "correct": false}, {"label": "Invalid value hai", "correct": false}], "explanation": "Subgrid se child grid parent ke columns/rows ke saath align rehti hai, jaise cards ke andar ke titles aur buttons barabar align karna."}, {"num": 32, "question": "content-visibility: auto ka kya fayda hai?", "options": [{"label": "Off-screen content ki rendering skip karke performance badhata hai", "correct": true}, {"label": "Content ko DOM se hata deta hai", "correct": false}, {"label": "visibility: hidden jaisa hai", "correct": false}, {"label": "Opacity 0 kar deta hai", "correct": false}], "explanation": "Browser jab tak section viewport ke paas na aaye uski layout/paint rendering defer kar deta hai. Lambe pages par initial render fast hota hai."}, {"num": 33, "question": "Smooth (compositor-friendly) animation ke liye kaunsi properties best hain?", "options": [{"label": "width aur height", "correct": false}, {"label": "top aur left", "correct": false}, {"label": "transform aur opacity", "correct": true}, {"label": "margin aur padding", "correct": false}], "explanation": "transform aur opacity aam taur par layout/paint trigger kiye bina GPU compositor par animate hote hain."}, {"num": 34, "question": "isolation: isolate ka kya kaam hai?", "options": [{"label": "Bina z-index/opacity ke naya stacking context banata hai", "correct": true}, {"label": "Element ko hide karta hai", "correct": false}, {"label": "Pointer events band karta hai", "correct": false}, {"label": "Element ka clone banata hai", "correct": false}], "explanation": "Is se element ke andar ke z-index values bahar ke elements se alag rehte hain, bina side effects ke."}, {"num": 35, "question": "@supports (display: grid) { ... } kya hai?", "options": [{"label": "Screen width ki query", "correct": false}, {"label": "Feature query: browser ko feature support karta ho to hi rules apply honge", "correct": true}, {"label": "File import karne ka tareeqa", "correct": false}, {"label": "Animation keyframes", "correct": false}], "explanation": "Feature queries progressive enhancement ke liye use hoti hain."}, {"num": 36, "question": "Container par scroll-snap-type: x mandatory lagane se kya hota hai?", "options": [{"label": "Horizontal scroll ke baad scroll hamesha kisi snap point par ruk-ta hai", "correct": true}, {"label": "Scroll smooth ho jata hai", "correct": false}, {"label": "Scrollbar chhup jata hai", "correct": false}, {"label": "Scroll lock ho jata hai", "correct": false}], "explanation": "Children par scroll-snap-align (start/center) set karna padta hai. Ye carousels mein aam hai."}, {"num": 37, "question": "margin-inline-start kis ke barabar hai?", "options": [{"label": "Hamesha margin-left", "correct": false}, {"label": "Writing direction ke hisaab se: LTR mein left, RTL mein right", "correct": true}, {"label": "margin-top", "correct": false}, {"label": "margin-bottom", "correct": false}], "explanation": "Logical properties writing mode aur direction follow karti hain, isliye multilingual (RTL) layouts mein aasani hoti hai."}, {"num": 38, "question": ":focus-visible aur :focus mein kya farq hai?", "options": [{"label": "Dono bilkul same hain", "correct": false}, {"label": ":focus-visible tab match hota hai jab browser keyboard-style focus indicator zaroori samjhe (mouse click par aksar nahi)", "correct": true}, {"label": ":focus-visible sirf hover par chalta hai", "correct": false}, {"label": ":focus-visible sirf disabled elements par chalta hai", "correct": false}], "explanation": "Accessibility ke liye keyboard users ko clear outline milti hai, jabki mouse users ko button click par extra ring nahi dikhti."}, {"num": 39, "question": "Flex item ke andar lamba text/content parent se bahar overflow ho raha hai. Common fix kya hai?", "options": [{"label": "Flex item par min-width: 0", "correct": true}, {"label": "display: block", "correct": false}, {"label": "float: left", "correct": false}, {"label": "width: auto", "correct": false}], "explanation": "Flex items ki default min-width: auto hoti hai, jis se wo content ke size se chhote nahi hote. min-width: 0 se wo shrink ho sakte hain."}, {"num": 40, "question": "grid-auto-flow: dense ka kya kaam hai?", "options": [{"label": "Khali gaps bharne ke liye items ko visually reorder kar deta hai", "correct": true}, {"label": "Grid ko collapse kar deta hai", "correct": false}, {"label": "Row-gap ko 0 kar deta hai", "correct": false}, {"label": "Columns hata deta hai", "correct": false}], "explanation": "Dense packing se chhote items pehle ke khali spots mein aa jate hain, lekin visual order DOM order se alag ho sakta hai (accessibility ka dhyan rakho)."}, {"num": 41, "question": "inset: 0 kis ke barabar hai?", "options": [{"label": "margin: 0", "correct": false}, {"label": "top: 0; right: 0; bottom: 0; left: 0", "correct": true}, {"label": "padding: 0", "correct": false}, {"label": "border: 0", "correct": false}], "explanation": "inset positioned elements ki four offsets ka shorthand hai. Overlay banane mein bahut kaam aata hai."}, {"num": 42, "question": "position: fixed child ke ancestor par transform laga ho to kya hota hai?", "options": [{"label": "Fixed hamesha viewport ke relative rehta hai", "correct": false}, {"label": "Transform wala ancestor uska containing block ban jata hai", "correct": true}, {"label": "Fixed ignore ho jata hai", "correct": false}, {"label": "Browser error deta hai", "correct": false}], "explanation": "transform, filter, perspective jaisi properties fixed/absolute descendants ke liye containing block bana deti hain. Ye ek common bug hai."}, {"num": 43, "question": "Native CSS nesting mein .card { & .title { color: red; } } mein & ka kya matlab hai?", "options": [{"label": "Parent selector (.card) ko refer karta hai", "correct": true}, {"label": "Logical AND hai", "correct": false}, {"label": "ID selector hai", "correct": false}, {"label": "Invalid syntax hai", "correct": false}], "explanation": "& nesting selector hai, jo enclosing rule ke selector ko represent karta hai. Ye .card .title ke barabar hai."}, {"num": 44, "question": "color-mix(in srgb, red 50%, blue) kya deta hai?", "options": [{"label": "Red aur blue ka 50-50 mix", "correct": true}, {"label": "Sirf red", "correct": false}, {"label": "Transparent color", "correct": false}, {"label": "Invalid value", "correct": false}], "explanation": "color-mix() do colors ko chosen color space mein percentage ke hisaab se blend karta hai."}, {"num": 45, "question": "@media (prefers-reduced-motion: reduce) kis liye hai?", "options": [{"label": "Jab user ne OS mein motion/animation kam karne ki setting on ki ho", "correct": true}, {"label": "Chhoti screens ke liye", "correct": false}, {"label": "Dark mode ke liye", "correct": false}, {"label": "Print ke liye", "correct": false}], "explanation": "Vestibular disorders ya motion sensitivity wale users ke liye animations kam ya band karne ka accessibility best practice hai."}, {"num": 46, "question": "cqw unit kis ke barabar hai?", "options": [{"label": "Viewport width ka 1%", "correct": false}, {"label": "Query container ki width ka 1%", "correct": true}, {"label": "Ek character ki width", "correct": false}, {"label": "Ek column ki width", "correct": false}], "explanation": "Container query units (cqw, cqh, cqi, cqb) nearest query container ke size ke relative hoti hain."}, {"num": 47, "question": "animation-timeline: scroll() ka kya matlab hai?", "options": [{"label": "Animation time ke bajaye scroll progress se drive hoti hai", "correct": true}, {"label": "Animation infinite chalti hai", "correct": false}, {"label": "Animation pause ho jati hai", "correct": false}, {"label": "Animation ka delay set hota hai", "correct": false}], "explanation": "Scroll-driven animations se progress bars ya parallax effects bina JavaScript ke ban sakte hain."}, {"num": 48, "question": "text-wrap: balance ka kya fayda hai?", "options": [{"label": "Lines ki lengths ko lagbhag barabar karta hai (headings ke liye useful)", "correct": true}, {"label": "Wrapping band kar deta hai", "correct": false}, {"label": "Har character par break karta hai", "correct": false}, {"label": "Hyphenation on karta hai", "correct": false}], "explanation": "Balance se heading ki aakhri line mein akela word (orphan) nahi bachta, aur text zyada achha dikhta hai."}, {"num": 49, "question": "display: flow-root ka kya kaam hai?", "options": [{"label": "Bina side effects ke naya block formatting context banata hai (floats contain karta hai)", "correct": true}, {"label": "Flex container banata hai", "correct": false}, {"label": "Element hide karta hai", "correct": false}, {"label": "Element ko inline banata hai", "correct": false}], "explanation": "Clearfix ya overflow: hidden ka clean modern alternative, jis se content clip nahi hota."}, {"num": 50, "question": "color: unset likhne par kya hota hai?", "options": [{"label": "Initial value mil jati hai", "correct": false}, {"label": "Color inherited property hai, isliye parent se inherit hota hai", "correct": true}, {"label": "Property remove ho jati hai", "correct": false}, {"label": "Invalid value hai", "correct": false}], "explanation": "unset ka matlab: inherited property ho to inherit, warna initial. color inherited hai, to parent ki value mil jati hai."}];
+const MARKS_PER_QUESTION = 2;
+const TOTAL_MARKS = QUESTIONS.length * MARKS_PER_QUESTION;
+const PASS_PERCENT = 40;
+let current = 0;
+let answers = new Array(QUESTIONS.length).fill(null);
+let student = {};
+
+const $ = id => document.getElementById(id);
+$("studentForm").addEventListener("submit", e => {
+  e.preventDefault();
+  student = {
+    name: $("studentName").value.trim(),
+    father: $("fatherName").value.trim(),
+    batch: $("batch").value.trim(),
+    email: $("studentEmail").value.trim()
+  };
+  $("studentScreen").classList.add("hidden");
+  $("quizScreen").classList.remove("hidden");
+  history.pushState({quiz:true}, "", "#quiz");
+  renderQuestion();
+});
+
+// Keep browser back from returning to an already answered question.
+window.addEventListener("popstate", () => {
+  if (!$("quizScreen").classList.contains("hidden")) history.pushState({quiz:true}, "", "#quiz");
+});
+
+function renderQuestion(){
+  const q = QUESTIONS[current];
+  $("questionCount").textContent = `Question ${current+1} of ${QUESTIONS.length}`;
+  $("answeredCount").textContent = `Answered: ${answers.filter(a => a !== null).length}/${QUESTIONS.length}`;
+  $("progress").style.width = `${(current/QUESTIONS.length)*100}%`;
+  $("questionText").textContent = `${current+1}. ${q.question}`;
+  $("options").innerHTML = "";
+  q.options.forEach((opt, i) => {
+    const label = document.createElement("label");
+    label.className = "option";
+    const radio = document.createElement("input");
+    radio.type = "radio"; radio.name = "answer"; radio.value = i;
+    radio.addEventListener("change", () => {
+      answers[current] = i;
+      $("nextBtn").disabled = false;
+      $("answeredCount").textContent = `Answered: ${answers.filter(a => a !== null).length}/${QUESTIONS.length}`;
+    });
+    const span = document.createElement("span");
+    span.textContent = `${String.fromCharCode(65+i)}. ${opt.label}`;
+    label.append(radio, span);
+    $("options").appendChild(label);
+  });
+  $("nextBtn").textContent = current === QUESTIONS.length-1 ? "Submit Quiz" : "Next Question";
+  $("nextBtn").disabled = answers[current] === null;
+}
+$("nextBtn").addEventListener("click", () => {
+  if (answers[current] === null) return;
+  if (current < QUESTIONS.length-1) {
+    current++;
+    renderQuestion();
+  } else showResult();
+});
+
+function showResult(){
+  let correct = 0;
+  QUESTIONS.forEach((q, i) => { if (answers[i] !== null && q.options[answers[i]].correct) correct++; });
+  const incorrect = QUESTIONS.length - correct;
+  const marks = correct * MARKS_PER_QUESTION;
+  const percent = Math.round((marks / TOTAL_MARKS) * 100);
+  const passed = percent >= PASS_PERCENT;
+  $("quizScreen").classList.add("hidden");
+  $("resultScreen").classList.remove("hidden");
+  $("scoreText").textContent = `${marks}/${TOTAL_MARKS} Marks`;
+  $("scoreText").className = `score ${passed ? "pass" : "fail"}`;
+  $("statusText").innerHTML = `<strong class="${passed ? "good" : "bad"}">${passed ? "PASS" : "FAIL"} — ${passed ? "Congratulations!" : "Keep Practicing!"}</strong><p>${PASS_PERCENT}% pass karne ke liye kam az kam 40 marks (20 correct answers) zaroori hain.</p>`;
+  $("correctCount").textContent = correct;
+  $("incorrectCount").textContent = incorrect;
+  $("percentText").textContent = `${percent}%`;
+  $("studentSummary").textContent = `Student: ${student.name} | Class/Batch: ${student.batch}`;
+  $("reviewBtn").textContent = incorrect ? `See Incorrect Questions (${incorrect})` : "All Answers Correct!";
+  $("reviewBtn").disabled = incorrect === 0;
+  $("progress").style.width = "100%";
+  buildReview();
+}
+function buildReview(){
+  const list = $("wrongList");
+  list.innerHTML = "";
+  QUESTIONS.forEach((q, i) => {
+    const chosen = answers[i];
+    if (chosen !== null && q.options[chosen].correct) return;
+    const item = document.createElement("div");
+    item.className = "wrong";
+    const title = document.createElement("h3");
+    title.textContent = `${i+1}. ${q.question}`;
+    item.appendChild(title);
+    const your = document.createElement("div");
+    your.className = "ans bad";
+    your.textContent = `Your answer: ${chosen === null ? "Not answered" : q.options[chosen].label}`;
+    const rightIndex = q.options.findIndex(o => o.correct);
+    const right = document.createElement("div");
+    right.className = "ans good";
+    right.textContent = `Correct answer: ${q.options[rightIndex].label}`;
+    const explanation = document.createElement("div");
+    explanation.className = "explain";
+    explanation.textContent = `Explanation: ${q.explanation}`;
+    item.append(your, right, explanation);
+    list.appendChild(item);
+  });
+}
+$("reviewBtn").addEventListener("click", () => {
+  $("reviewSection").classList.toggle("hidden");
+  $("reviewBtn").textContent = $("reviewSection").classList.contains("hidden") ? "See Incorrect Questions" : "Hide Incorrect Questions";
+});
+</script>
+</body>
+</html>
